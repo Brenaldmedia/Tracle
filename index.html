@@ -1,338 +1,359 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tracle • README (HTML)</title>
-  <meta name="description" content="Tracle — a modern WhatsApp bot by Brenald Media. Features, setup, and links." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tracle • WhatsApp Bot</title>
   <style>
     :root{
-      --bg: #0b0f14;
-      --card: rgba(255,255,255,.06);
-      --card-border: rgba(255,255,255,.12);
-      --text: #e6edf3;
-      --muted: #98a2b3;
-      --brand: #7c3aed;
-      --brand-2: #06b6d4;
-      --glow: 0 10px 30px rgba(124,58,237,.35);
-      --radius: 18px;
-      --ring: 0 0 0 2px rgba(124,58,237,.35), 0 0 0 8px rgba(124,58,237,.08);
+      --bg:#0a0a1a;
+      --card: rgba(18,18,40,0.78);
+      --accent-1: #00faff;
+      --accent-2: #00b7ff;
+      --muted: #9ecfff;
+      --glass-border: rgba(0,255,255,0.12);
+      --code-bg:#0f1220;
+      --radius:14px;
+      --max-width:1100px;
     }
-    *{box-sizing:border-box}
+
+    *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%}
     body{
-      margin:0;
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      background: radial-gradient(1200px 800px at 10% -10%, rgba(124,58,237,.25), transparent 50%),
-                  radial-gradient(900px 600px at 110% 10%, rgba(6,182,212,.22), transparent 50%),
-                  var(--bg);
-      color: var(--text);
-      line-height:1.6;
-      overflow-x:hidden;
+      font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial;
+      background:var(--bg);
+      color:#e6eeff;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.5;
+      scroll-behavior:smooth;
+      padding-top:64px; /* space for fixed nav */
     }
-    a{color:inherit;text-decoration:none}
-    .container{max-width:1200px;margin:0 auto;padding:24px}
-    .hero{
-      position:relative;
-      padding:72px 0 48px;
-      display:grid;
-      gap:24px;
+
+    /* Star canvas (full-screen) */
+    canvas#stars{
+      position:fixed; inset:0; width:100%; height:100%; z-index:-2; display:block;
+      background: radial-gradient(ellipse at center, #051026 0%, #000 60%);
+    }
+
+    /* subtle grain overlay for depth */
+    .grain {
+      pointer-events:none;
+      position:fixed; inset:0; z-index:-1;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><filter id="n"><feTurbulence baseFrequency="0.8" numOctaves="1" seed="2"/></filter><rect width="100%" height="100%" filter="url(%23n)" opacity="0.02" fill="white"/></svg>');
+      opacity:0.25;
+      mix-blend-mode:overlay;
+    }
+
+    /* NAVBAR */
+    nav {
+      --h:64px;
+      position:fixed;
+      top:0; left:0; right:0;
+      height:var(--h);
+      display:flex;
       align-items:center;
-      grid-template-columns: 1.1fr .9fr;
+      justify-content:space-between;
+      padding:0 18px;
+      z-index:1000;
+      background:linear-gradient(180deg, rgba(7,7,18,0.45), rgba(7,7,18,0.12));
+      border-bottom: 1px solid var(--glass-border);
+      backdrop-filter: blur(8px) saturate(120%);
     }
-    @media (max-width: 900px){ .hero{ grid-template-columns: 1fr; padding:56px 0 32px; } }
-    .title{
-      font-weight:900;
-      line-height:1.05;
-      font-size: clamp(38px, 6vw, 64px);
-      letter-spacing:-.02em;
+
+    .brand {
+      display:flex; align-items:center; gap:12px;
+      font-weight:700; color:var(--muted);
     }
-    .subtitle{
-      color:var(--muted);
-      font-size: clamp(16px, 2.4vw, 20px);
-      margin-top:10px;
+    .brand .logo {
+      width:38px; height:38px; border-radius:9px;
+      background:linear-gradient(135deg,var(--accent-1),var(--accent-2));
+      box-shadow:0 6px 18px rgba(0,200,255,0.12), inset 0 -6px 18px rgba(255,255,255,0.06);
+      display:inline-flex; align-items:center; justify-content:center; color:#011;
+      font-weight:900; font-size:18px;
     }
-    .chip{
-      display:inline-flex;align-items:center;gap:10px;
-      padding:8px 14px;border-radius:999px;
-      background: linear-gradient(135deg, rgba(124,58,237,.25), rgba(6,182,212,.22));
-      border:1px solid var(--card-border);
-      backdrop-filter: blur(8px);
-      font-weight:600;
-      letter-spacing:.2px;
-      box-shadow: var(--glow);
+
+    .nav-links {
+      display:flex; gap:20px; align-items:center;
     }
-    .btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
-    .btn{
-      position:relative;
-      display:inline-flex;align-items:center;gap:10px;
-      padding:12px 16px;border-radius:14px;
-      background: linear-gradient(135deg, rgba(124,58,237,.9), rgba(6,182,212,.9));
-      color:white;font-weight:700;border:0;cursor:pointer;
-      transform: translateZ(0);
-      transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
-      box-shadow: var(--glow);
-      user-select:none;
+    .nav-links a{
+      color:var(--muted); text-decoration:none; font-weight:600; font-size:0.95rem;
+      padding:8px 10px; border-radius:8px; transition:all .22s ease;
     }
-    .btn.secondary{background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.05)); color:#e6edf3; border:1px solid var(--card-border)}
-    .btn:hover{transform: translateY(-2px); filter:saturate(1.05)}
-    .btn:active{transform: translateY(0);}
-    .card{
-      position:relative;
-      background: var(--card);
-      border:1px solid var(--card-border);
-      border-radius: var(--radius);
-      padding:22px;
-      overflow:hidden;
-      box-shadow: 0 1px 0 rgba(255,255,255,.05), 0 20px 60px rgba(0,0,0,.25);
+    .nav-links a:hover{
+      color:#fff; box-shadow:0 0 14px rgba(0,255,255,0.14); transform:translateY(-3px);
+      text-shadow:0 0 8px rgba(0,200,255,0.12);
     }
-    .grid{display:grid;gap:16px}
-    .grid.cols-3{grid-template-columns: repeat(3, 1fr)}
-    .grid.cols-2{grid-template-columns: repeat(2, 1fr)}
-    @media (max-width: 900px){ .grid.cols-3{grid-template-columns:1fr} .grid.cols-2{grid-template-columns:1fr} }
-    .section{padding:28px 0}
-    .section h2{font-size: clamp(24px, 3.2vw, 32px); margin:0 0 10px; letter-spacing:-.02em}
-    .muted{color:var(--muted)}
-    .code{
-      position:relative;
-      background:#0d1117;
-      border:1px solid #30363d;
-      border-radius:14px;
-      padding:16px 16px 16px 16px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      overflow:auto;
+
+    /* hamburger for mobile */
+    .hamburger {
+      display:none; width:44px; height:44px; border-radius:10px;
+      border:1px solid transparent; background:transparent; align-items:center; justify-content:center;
     }
-    .code pre{margin:0;font-size:14px;line-height:1.55;white-space:pre}
-    .copy{
-      position:absolute;top:10px;right:10px;
-      border:1px solid #30363d;
-      background:#11151a;
-      color:#c9d1d9;
-      padding:6px 10px;border-radius:10px;cursor:pointer;font-size:12px
+    .hamburger .bars { width:22px; height:16px; position:relative; }
+    .hamburger .bars span{
+      position:absolute; left:0; right:0; height:2px; border-radius:2px; background:var(--muted);
+      transition: transform .25s ease, top .25s ease, opacity .25s;
     }
-    .badge{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;border:1px solid var(--card-border);background:rgba(255,255,255,.05)}
-    .list{display:grid;gap:10px}
-    .list li{display:flex;align-items:flex-start;gap:10px}
-    .list i{margin-top:3px}
-    .tilt{transform-style:preserve-3d;will-change:transform;transition: transform .15s ease}
-    .tilt:hover{transform: rotateX(4deg) rotateY(-4deg)}
-    .orb{
-      position:absolute; inset:-40% -30% auto auto; width: 60vmin; aspect-ratio:1/1;
-      background: radial-gradient(circle at 30% 30%, rgba(124,58,237,.28), transparent 55%),
-                  radial-gradient(circle at 70% 70%, rgba(6,182,212,.28), transparent 55%);
-      filter: blur(30px); opacity:.9; pointer-events:none; transform: rotate(12deg);
-      animation: float 10s ease-in-out infinite alternate;
+    .hamburger .bars span:nth-child(1){ top:0 }
+    .hamburger .bars span:nth-child(2){ top:7px }
+    .hamburger .bars span:nth-child(3){ top:14px }
+
+    /* Open state */
+    nav.open .nav-links { display:flex; flex-direction:column; position:fixed; top:64px; right:14px; background:rgba(12,12,28,0.95); padding:10px; border-radius:12px; border:1px solid var(--glass-border); }
+    nav.open .hamburger .bars span:nth-child(1){ transform:rotate(45deg); top:7px; }
+    nav.open .hamburger .bars span:nth-child(2){ opacity:0 }
+    nav.open .hamburger .bars span:nth-child(3){ transform:rotate(-45deg); top:7px; }
+
+    /* HEADER */
+    header {
+      padding:48px 20px 12px;
+      text-align:center;
+      max-width:var(--max-width); margin:0 auto;
     }
-    @keyframes float { from{ transform: translateY(-10px) rotate(8deg)} to{ transform: translateY(18px) rotate(16deg)} }
-    footer{padding:36px 0 60px;color:var(--muted);text-align:center}
-    .hr{height:1px;background:linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);margin:22px 0}
-    .pill{display:inline-block;padding:6px 10px;border-radius:999px;border:1px solid var(--card-border);background:rgba(255,255,255,.06);font-size:12px;color:var(--muted)}
-    .kbd{font-family:inherit;border:1px solid #30363d;border-bottom-width:3px;border-radius:8px;padding:0 6px;background:#0d1117;color:#c9d1d9}
-    .anchor{scroll-margin-top:80px}
-    .nav{
-      position: sticky; top: 0; z-index: 20;
-      background: rgba(11,15,20,.6); backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255,255,255,.08);
+    header h1 {
+      font-size:2.6rem; line-height:1.05;
+      background:linear-gradient(90deg,var(--accent-1),var(--accent-2));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      text-shadow:0 6px 22px rgba(0,200,255,0.06);
+      margin-bottom:8px;
     }
-    .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 0}
-    .logo{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.4px}
-    .logo .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--brand),var(--brand-2));box-shadow:0 0 0 4px rgba(124,58,237,.15)}
-    .nav a.link{padding:8px 12px;border-radius:10px}
-    .nav a.link:hover{background:rgba(255,255,255,.06)}
+    header p { color:var(--muted); font-size:1.05rem; margin-bottom:2px; }
+
+    /* MAIN container */
+    main{ padding:18px; max-width:var(--max-width); margin: 10px auto 80px; }
+
+    section.card {
+      margin:20px 0; padding:20px;
+      background:var(--card); border-radius:var(--radius);
+      border:1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+      transform:translateY(0); transition: transform .35s cubic-bezier(.2,.9,.2,1), box-shadow .35s;
+    }
+    section.card:hover { transform:translateY(-6px); box-shadow:0 20px 40px rgba(0,200,255,0.06) }
+
+    section.card h2 { color:var(--accent-1); font-size:1.3rem; margin-bottom:10px; border-bottom:1px solid rgba(0,180,255,0.06); padding-bottom:10px; }
+    section.card ul { margin-left:18px; color:#dcefff; }
+    section.card li { margin:8px 0; font-size:0.98rem; }
+
+    pre, code {
+      background:var(--code-bg); color:var(--accent-1);
+      padding:12px; border-radius:10px; overflow:auto; font-family:ui-monospace, SFMono-Regular, monospace;
+    }
+
+    .cta-row { text-align:center; margin:28px 0; }
+    .btn {
+      background:linear-gradient(120deg,var(--accent-2),var(--accent-1));
+      color:#031123; padding:10px 18px; border-radius:999px; font-weight:700; display:inline-block;
+      margin:6px; box-shadow:0 8px 26px rgba(0,200,255,0.12); transition:transform .25s, box-shadow .25s;
+    }
+    .btn:hover{ transform:translateY(-6px); box-shadow:0 18px 40px rgba(0,200,255,0.22) }
+
+    footer { text-align:center; color:#9fbfe6; padding:28px 18px; font-size:0.95rem; opacity:0.95 }
+
+    /* Fade-in animations */
+    .fade-in { opacity:0; transform:translateY(18px); transition:all .7s cubic-bezier(.2,.9,.2,1); will-change:transform,opacity; }
+    .fade-in.visible { opacity:1; transform:none; }
+
+    /* Responsive layout */
+    @media (max-width:900px){
+      header h1{ font-size:2.2rem }
+      section.card { padding:18px }
+    }
+    @media (max-width:700px){
+      body{ padding-top:56px }
+      nav{ padding:0 10px }
+      .nav-links{ display:none }
+      .hamburger{ display:flex; align-items:center; justify-content:center }
+      header{ padding:34px 16px 8px }
+      header h1{ font-size:1.9rem }
+      .cta-row .btn{ display:block; width:92%; margin:10px auto }
+      main{ padding:14px }
+    }
+    @media (max-width:420px){
+      header p{ font-size:0.95rem }
+      section.card h2{ font-size:1.05rem }
+      pre{ font-size:0.92rem }
+    }
   </style>
 </head>
 <body>
-  <div class="nav">
-    <div class="container nav-inner">
-      <div class="logo">
-        <div class="dot"></div>
-        <span>Tracle</span>
-        <span class="pill">WhatsApp Bot</span>
-      </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">
-        <a class="link" href="#features">Features</a>
-        <a class="link" href="#install">Install</a>
-        <a class="link" href="#deploy">Deployment</a>
-        <a class="link" href="#links">Links</a>
+  <canvas id="stars" aria-hidden="true"></canvas>
+  <div class="grain" aria-hidden="true"></div>
+
+  <nav id="nav">
+    <div class="brand">
+      <div class="logo">T</div>
+      <div>
+        <div style="font-weight:800">Tracle</div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-top:2px">WhatsApp Bot</div>
       </div>
     </div>
-  </div>
 
-  <div class="container">
-    <section class="hero">
-      <div>
-        <span class="chip"><i class="fa-solid fa-bolt"></i> Fast • Simple • Powerful</span>
-        <h1 class="title">Tracle <span style="opacity:.75">— WhatsApp Bot</span></h1>
-        <p class="subtitle">A modern bot powered by Baileys. Built by <strong>Brenald Media</strong>. Smooth setup, clean plugins, and a delightful developer experience.</p>
-        <div class="btns">
-          <a class="btn" href="https://whatsapp.com/channel/0029VbBPPXV3WHTTNAWOGf0m" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Bot Channel</a>
-          <a class="btn secondary" href="https://github.com/Brenaldmedia/Tracle" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i> GitHub Repo</a>
-          <a class="btn secondary" href="#install"><i class="fa-solid fa-terminal"></i> Get Started</a>
-        </div>
-      </div>
-      <div class="card tilt">
-        <div class="orb"></div>
-        <h3 style="margin:0 0 8px">What you get</h3>
-        <ul class="list muted" style="margin:0">
-          <li><i class="fa-solid fa-circle-check"></i> Auto-replies, media tools (TikTok, YouTube, etc.)</li>
-          <li><i class="fa-solid fa-circle-check"></i> Plugin-based commands</li>
-          <li><i class="fa-solid fa-circle-check"></i> Local login with number/OTP</li>
-          <li><i class="fa-solid fa-circle-check"></i> Ready for v1.2.0 persistent sessions</li>
-        </ul>
-        <div class="hr"></div>
-        <div class="badge"><i class="fa-solid fa-code"></i> Node.js • Baileys</div>
-      </div>
-    </section>
+    <div class="nav-links" role="navigation" aria-label="Main navigation">
+      <a href="#features">Features</a>
+      <a href="#install">Install</a>
+      <a href="#deploy">Deploy</a>
+      <a href="#structure">Structure</a>
+      <a href="#links">Links</a>
+    </div>
 
-    <section class="section anchor" id="features">
+    <button class="hamburger" id="hambtn" aria-label="Toggle menu" aria-expanded="false">
+      <div class="bars"><span></span><span></span><span></span></div>
+    </button>
+  </nav>
+
+  <header>
+    <h1>✨ Tracle • WhatsApp Bot</h1>
+    <p>A modern WhatsApp bot powered by <strong>Baileys</strong>. Built with ❤️ by <strong>Brenald Media</strong>.</p>
+  </header>
+
+  <main>
+    <section id="features" class="card fade-in">
       <h2>⚡ Features (v1.0.x)</h2>
-      <p class="muted">Small today, mighty tomorrow. Here’s what Tracle can do right now:</p>
-      <div class="grid cols-3">
-        <div class="card tilt">
-          <h3 style="margin:0 0 6px">Auto Replies</h3>
-          <p class="muted">Smart message handling with clean, extensible handlers.</p>
-        </div>
-        <div class="card tilt">
-          <h3 style="margin:0 0 6px">Media Tools</h3>
-          <p class="muted">Download/share media from popular platforms like TikTok & YouTube.</p>
-        </div>
-        <div class="card tilt">
-          <h3 style="margin:0 0 6px">Plugin System</h3>
-          <p class="muted">Drop commands in <code>/plugins</code>; hot, simple, and tidy.</p>
-        </div>
-        <div class="card tilt">
-          <h3 style="margin:0 0 6px">Local Login</h3>
-          <p class="muted">Run locally or on a VPS—enter your WhatsApp number, receive an OTP, and connect.</p>
-        </div>
-        <div class="card tilt">
-          <h3 style="margin:0 0 6px">Deploy Path</h3>
-          <p class="muted">v1.2.0 adds session persistence for Render/Railway/Heroku.</p>
-        </div>
-        <div class="card tilt">
-          <h3 style="margin:0 0 6px">Open Source</h3>
-          <p class="muted">MIT-lean vibes—PRs welcome. Star the repo to support!</p>
-        </div>
-      </div>
+      <ul>
+        <li><strong>Auto Replies</strong> — Smart message handling with extensible command handlers.</li>
+        <li><strong>Media Tools</strong> — Download from TikTok, YouTube, Facebook, and more.</li>
+        <li><strong>Plugin System</strong> — Drop commands in <code>plugins/</code> for instant expansion.</li>
+        <li><strong>Local Login</strong> — Connect using number + OTP (interactive).</li>
+        <li><strong>Deploy Ready</strong> — Session persistence support planned for Render/Railway/Heroku.</li>
+        <li><strong>Open Source</strong> — MIT license; PRs welcome.</li>
+      </ul>
     </section>
 
-    <section class="section anchor" id="install">
+    <section id="install" class="card fade-in">
       <h2>🛠️ Installation</h2>
-      <div class="grid cols-2">
-        <div class="card">
-          <h3 style="margin:0 0 10px"><i class="fa-solid fa-download"></i> Clone & Install</h3>
-          <div class="code">
-            <button class="copy" data-copy="git clone https://github.com/Brenaldmedia/Tracle.git&#10;cd Tracle&#10;npm install">Copy</button>
-            <pre><code>$ git clone https://github.com/Brenaldmedia/Tracle.git
-$ cd Tracle
-$ npm install</code></pre>
-          </div>
-        </div>
-        <div class="card">
-          <h3 style="margin:0 0 10px"><i class="fa-solid fa-rocket"></i> Run the Bot</h3>
-          <div class="code">
-            <button class="copy" data-copy="node index.js">Copy</button>
-            <pre><code>$ node index.js</code></pre>
-          </div>
-          <p class="muted" style="margin-top:10px">On first run, Tracle will ask for your <strong>WhatsApp number</strong> and send you a <strong>login code</strong>. Enter the code and you're connected.</p>
-        </div>
-      </div>
+      <pre><code>git clone https://github.com/Brenaldmedia/Tracle.git
+cd Tracle
+npm install
+node index.js</code></pre>
+      <p style="color:var(--muted); margin-top:8px">On first run, Tracle will prompt for your <strong>WhatsApp number</strong> and send a login code — enter it to connect.</p>
     </section>
 
-    <section class="section anchor" id="deploy">
+    <section id="deploy" class="card fade-in">
       <h2>🌍 Deployment Notes</h2>
-      <div class="grid cols-2">
-        <div class="card">
-          <h3 style="margin:0 0 6px">Local / VPS</h3>
-          <p class="muted">Works out of the box with interactive login (number + OTP).</p>
-        </div>
-        <div class="card">
-          <h3 style="margin:0 0 6px">Render / Railway / Heroku</h3>
-          <p class="muted">Planned in <strong>v1.2.0</strong> via persistent session storage (no terminal input needed).</p>
-        </div>
-      </div>
-      <div class="card" style="margin-top:12px">
-        <h3 style="margin:0 0 10px">Project Structure</h3>
-        <div class="code">
-<pre><code>Tracle/
+      <ul>
+        <li><strong>Local / VPS:</strong> Works out of the box with interactive login (number + OTP).</li>
+        <li><strong>Railway / Render / Heroku:</strong> v1.2.0 will add persistent session support (no manual OTP).</li>
+      </ul>
+    </section>
+
+    <section id="structure" class="card fade-in">
+      <h2>📂 Project Structure</h2>
+      <pre><code>Tracle/
 ├─ index.js        # Main bot file
 ├─ package.json    # Dependencies & scripts
-├─ plugins/        # Custom commands/features
+├─ plugins/        # Custom commands & features
 └─ session/        # Auth data (created after first login)</code></pre>
-        </div>
-      </div>
     </section>
 
-    <section class="section anchor" id="links">
+    <section id="links" class="card fade-in">
       <h2>🔗 Links & Community</h2>
-      <div class="grid cols-2">
-        <a class="card tilt" href="https://whatsapp.com/channel/0029VbBPPXV3WHTTNAWOGf0m" target="_blank" rel="noopener">
-          <h3 style="margin:0 0 6px"><i class="fa-brands fa-whatsapp"></i> Bot Channel</h3>
-          <p class="muted">Follow for news, updates, and tips.</p>
-        </a>
-        <a class="card tilt" href="https://github.com/Brenaldmedia/Tracle" target="_blank" rel="noopener">
-          <h3 style="margin:0 0 6px"><i class="fa-brands fa-github"></i> GitHub Repo</h3>
-          <p class="muted">Source code, issues, and contributions.</p>
-        </a>
-        <a class="card tilt" href="https://www.youtube.com/@BrenaldMedia" target="_blank" rel="noopener">
-          <h3 style="margin:0 0 6px"><i class="fa-brands fa-youtube"></i> YouTube</h3>
-          <p class="muted">Tutorials and walkthroughs by Brenald Media.</p>
-        </a>
-        <a class="card tilt" href="https://www.tiktok.com/@brenaldmedia?_" target="_blank" rel="noopener">
-          <h3 style="margin:0 0 6px"><i class="fa-brands fa-tiktok"></i> TikTok</h3>
-          <p class="muted">Quick tips & showcases.</p>
-        </a>
+      <div class="cta-row">
+        <a class="btn" href="https://whatsapp.com/channel/0029VbBPPXV3WHTTNAWOGf0m" target="_blank" rel="noopener">WhatsApp Channel</a>
+        <a class="btn" href="https://github.com/Brenaldmedia/Tracle" target="_blank" rel="noopener">GitHub Repo</a>
+        <a class="btn" href="https://www.youtube.com/@BrenaldMedia" target="_blank" rel="noopener">YouTube</a>
+        <a class="btn" href="https://www.tiktok.com/@brenaldmedia" target="_blank" rel="noopener">TikTok</a>
       </div>
+      <p style="text-align:center; color:var(--muted); margin-top:8px">Made with ❤️ and starlight by <strong>Brenald Media</strong>.</p>
     </section>
+  </main>
 
-    <footer>
-      <div class="hr"></div>
-      <p>Made with <span aria-label="love">❤️</span> by <strong>Brenald Media</strong>.</p>
-      <p class="muted">Tracle — A WhatsApp bot made simple.</p>
-    </footer>
-  </div>
+  <footer aria-hidden="false">
+    © <span id="year"></span> Brenald Media · Tracle Bot
+  </footer>
 
   <script>
-    // Copy buttons
-    document.querySelectorAll('.copy').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const txt = btn.getAttribute('data-copy');
-        navigator.clipboard.writeText(txt);
-        btn.textContent = 'Copied!';
-        btn.style.boxShadow = 'var(--ring)';
-        setTimeout(() => { btn.textContent = 'Copy'; btn.style.boxShadow = 'none'; }, 1200);
+    // ---------- Responsive nav toggle ----------
+    const nav = document.getElementById('nav');
+    const hambtn = document.getElementById('hambtn');
+    hambtn.addEventListener('click', () => {
+      const isOpen = nav.classList.toggle('open');
+      hambtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    // Close mobile nav when clicking a link
+    document.querySelectorAll('.nav-links a').forEach(a => {
+      a.addEventListener('click', () => {
+        if (nav.classList.contains('open')) {
+          nav.classList.remove('open');
+          hambtn.setAttribute('aria-expanded', 'false');
+        }
       });
     });
 
-    // Scroll reveal
-    const io = new IntersectionObserver((entries)=>{
-      entries.forEach(e=>{
-        if(e.isIntersecting){
-          e.target.animate([
-            {opacity:0, transform:'translateY(16px) scale(.98)'},
-            {opacity:1, transform:'translateY(0) scale(1)'},
-          ], {duration:600, easing:'cubic-bezier(.22,1,.36,1)', fill:'forwards'});
-          io.unobserve(e.target);
-        }
-      });
-    }, {threshold:.16});
-
-    document.querySelectorAll('.card, .tilt, .section h2').forEach(el=>io.observe(el));
-
-    // Smooth anchor scroll
-    document.querySelectorAll('a[href^="#"]').forEach(a=>{
-      a.addEventListener('click', e=>{
-        const target = document.querySelector(a.getAttribute('href'));
-        if(target){
-          e.preventDefault();
-          target.scrollIntoView({behavior:'smooth', block:'start'});
-          history.pushState(null,'',a.getAttribute('href'));
-        }
-      })
+    // ---------- Starfield (responsive count) ----------
+    const canvas = document.getElementById('stars');
+    const ctx = canvas.getContext('2d');
+    let W = window.innerWidth, H = window.innerHeight;
+    function resize() {
+      W = window.innerWidth; H = window.innerHeight;
+      canvas.width = W; canvas.height = H;
+      initStars();
+    }
+    window.addEventListener('resize', () => {
+      // debounce small resize events
+      clearTimeout(window._resizeTimeout);
+      window._resizeTimeout = setTimeout(resize, 120);
     });
+
+    let stars = [];
+    function initStars(){
+      stars = [];
+      const density = Math.max(60, Math.floor((W*H)/20000)); // density adjusts to screen
+      for (let i=0;i<density;i++){
+        stars.push({
+          x: Math.random()*W - W/2,
+          y: Math.random()*H - H/2,
+          z: Math.random()*W,
+          size: Math.random()*1.6 + 0.4,
+          speed: 0.3 + Math.random()*1.2
+        });
+      }
+    }
+    resize();
+
+    function render(){
+      ctx.clearRect(0,0,W,H);
+      // subtle background gradient
+      const g = ctx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,'rgba(5,10,20,0.0)');
+      g.addColorStop(1,'rgba(0,0,0,0.2)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0,0,W,H);
+
+      // draw stars
+      ctx.fillStyle = '#a8fbff';
+      for (let i=0;i<stars.length;i++){
+        const s = stars[i];
+        s.z -= s.speed;
+        if (s.z <= 1) {
+          s.x = Math.random()*W - W/2;
+          s.y = Math.random()*H - H/2;
+          s.z = W;
+        }
+        const k = 128.0 / s.z;
+        const px = s.x * k + W/2;
+        const py = s.y * k + H/2;
+        const size = Math.max(0.3, s.size * (1 - s.z / W) * 1.8);
+        ctx.globalAlpha = 0.6 + (1 - s.z/W) * 0.8;
+        ctx.fillRect(px, py, size, size);
+      }
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(render);
+    }
+    render();
+
+    // ---------- Fade-in on scroll ----------
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) e.target.classList.add('visible');
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // ---------- Dynamic year in footer ----------
+    document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 </body>
 </html>

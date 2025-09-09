@@ -1,0 +1,8 @@
+{
+  "hello": "https://example.com/stickers/hello.webp",
+  "hi": "https://example.com/stickers/hi.webp",
+  "lol": "https://example.com/stickers/lol.webp",
+  "good morning": "https://example.com/stickers/good-morning.webp",
+  "good night": "https://example.com/stickers/good-night.webp",
+  "love": "https://example.com/stickers/love.webp"
+}
