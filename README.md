@@ -115,4 +115,4 @@ First run will show a QR code or pairing code for login. Sessions are saved auto
 .tagall — Mention everyone
 .imagine <prompt> — Generate AI image
 .tiktok <url> — Download TikTok video
-.status on — Enable auto view status
+.autoview — Enable auto view status
